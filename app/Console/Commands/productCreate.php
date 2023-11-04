@@ -38,6 +38,7 @@ class productCreate extends Command
                     'image' =>  $i . '.jpg'
                 ]);
             }
+            $this->info('berhasil create product' . $p);
         }
     }
 }

@@ -4,23 +4,38 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
+ini_set('memory_limit', '2048M');
+set_time_limit(86400);
 class ProductController extends Controller
 {
     public function getData(Request $request)
     {
         $productData = Product::query();
+        // if (!empty($request['search'])) {
+        //     $search = "%" . $request['search'] . "%";
+        //     $productData->where('name', 'like', $search);
+        // }
+
+        // if (!empty($request['category_id'])) {
+        //     $category_id = $request['category_id'];
+        //     $productData->where('category_id', $category_id);
+        // }
+
+        // Kondisi pencarian
         if (!empty($request['search'])) {
             $search = "%" . $request['search'] . "%";
-            $productData->orWhere('name', 'like', $search);
+            $productData->where('name', 'like', $search);
         }
 
+        // Kondisi category_id
         if (!empty($request['category_id'])) {
             $category_id = $request['category_id'];
-            $productData->orWhere('category_id', $category_id);
+            $productData->where('category_id', $category_id);
         }
 
         $productData->where('stock', '>=', 1);
@@ -98,7 +113,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'stock' => $request->stock,
             'description' => $request->description,
-            'price' => $request->price,
+            'price' => (int) $request->price,
             'category_id' => $request->category_id,
             'image' => $lampiranFulltextFile
         ];
